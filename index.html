@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div> add user
+        <input type="text" id="email" placeholder="enter your new email">
+        <input type="password" id="password" placeholder="enter your new password">
+        <button onclick="adduser()">add user</button>
+    </div>
+    <br>
+    <div> delete user
+        <input type="text" id="myid" placeholder="enteruser id">
+        <button onclick="deleteuser()">delete user</button>
+    </div>
+    <br>
+    <div> update user
+        <input type="text" id="myidforupdate" placeholder="enteruser id">
+
+        <input type="password" id="updatedpass" placeholder="eenter new pass">
+        <button onclick="updateuser()">update user</button>
+    </div>
+    <ol id="mylist">
+
+    </ol>
+    
+</body>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+            get()
+
+        function updateuser(){
+            var id=document.getElementById('myidforupdate').value
+            var password=document.getElementById('updatedpass').value
+
+            axios.patch('http://localhost/php%20course/api_update.php',{id:id,password:password}).then(function(res){
+            // console.log(res)
+            get()
+            document.getElementById('myidforupdate').value=''
+            document.getElementById('updatedpass').value=''
+
+        }).catch(function (err){
+            console.log('this data is not updated')
+        })
+
+        }
+        function deleteuser(){
+            var id=document.getElementById('myid').value
+            axios.delete('http://localhost/php%20course/api_delete.php',{data:{id:id}}).then(function(res){
+            // console.log(res)
+            get()
+            document.getElementById('myid').value=''
+        }).catch(function (err){
+            console.log('this data is not deleted')
+        })
+
+
+        }
+        function adduser(){
+            var email=document.getElementById('email').value
+            var password=document.getElementById('password').value
+            axios.post('http://localhost/php%20course/api_insert.php',{email:email,password:password}).then(function(res){
+            // console.log(res)
+            get()
+            document.getElementById('email').value=''
+            document.getElementById('password').value=''
+        }).catch(function (err){
+            console.log('this data is not added into db')
+        })
+
+
+        }
+        function get(){
+                axios.get('http://localhost/php%20course/api_get.php').then(function (res){
+                // console.log(res.data.message.msg)
+                //////
+                var element=document.getElementById('mylist')
+                element.innerHTML=''
+                for(var i=0;i<res.data.data.length;i++){
+                    var newelement=document.createElement('li')
+                    newelement.innerHTML=res.data.data[i].useremail+' user id='+res.data.data[i].id
+                    element.appendChild(newelement)
+
+                }
+
+                // newelement.addEventListener('click',function (e){
+                //     console.log(e.target.innerHTML)
+                // })
+
+                //////////
+                // console.log(res.data.data)
+
+            }).catch(function (error){
+                console.log('sorry you have an error')
+            })
+        }
+    </script>
+</html>
